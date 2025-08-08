@@ -3,11 +3,13 @@ import { getAuth, signInWithRedirect, GoogleAuthProvider, getRedirectResult, sig
 import { getFirestore } from "firebase/firestore";
 
 const firebaseConfig = {
-  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
-  authDomain: `${import.meta.env.VITE_FIREBASE_PROJECT_ID}.firebaseapp.com`,
-  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
-  storageBucket: `${import.meta.env.VITE_FIREBASE_PROJECT_ID}.firebasestorage.app`,
-  appId: import.meta.env.VITE_FIREBASE_APP_ID,
+  apiKey: "AIzaSyA28ZSWH3NlGo78SCPeo0NLsNev9Ti1nxA",
+  authDomain: "matchamap-27b0c.firebaseapp.com",
+  projectId: "matchamap-27b0c",
+  storageBucket: "matchamap-27b0c.firebasestorage.app",
+  messagingSenderId: "259437531481",
+  appId: "1:259437531481:web:343dfb71f7d7b84559bc48",
+  measurementId: "G-E8Y9ZP4ZTZ"
 };
 
 const app = initializeApp(firebaseConfig);
