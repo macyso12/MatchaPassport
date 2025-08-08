@@ -6,6 +6,7 @@ import { Spot } from "@shared/schema";
 import { StarRating } from "@/components/StarRating";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { AuthTest } from "@/components/AuthTest";
 
 export default function MapView() {
   const [, setLocation] = useLocation();
@@ -111,6 +112,9 @@ export default function MapView() {
           );
         })}
       </div>
+
+      {/* Debug Panel */}
+      <AuthTest />
 
       {/* Spot Preview Card */}
       {selectedSpot && (
