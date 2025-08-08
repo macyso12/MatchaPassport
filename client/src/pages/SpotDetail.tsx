@@ -49,7 +49,11 @@ export default function SpotDetail() {
       });
       showToast("Spot saved for later!");
     } catch (error) {
-      showToast("Failed to save spot", "error");
+      if (error.message?.includes("already exists")) {
+        showToast("Spot is already saved!", "error");
+      } else {
+        showToast("Failed to save spot", "error");
+      }
     }
   };
 
@@ -120,18 +124,18 @@ export default function SpotDetail() {
       </div>
 
       {/* Action Buttons */}
-      <div className="absolute bottom-0 left-0 right-0 bg-white border-t border-gray-200 p-4">
-        <div className="flex space-x-3">
+      <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 p-4 shadow-lg z-50">
+        <div className="flex space-x-3 max-w-md mx-auto">
           <Button 
             onClick={handleCheckIn}
-            className="flex-1 bg-matcha-500 text-white hover:bg-matcha-600"
+            className="flex-1 bg-matcha-500 text-white hover:bg-matcha-600 py-3"
           >
             Check In
           </Button>
           <Button 
             variant="outline"
             onClick={handleSaveForLater}
-            className="flex-1 bg-gray-100 text-gray-700 hover:bg-gray-200"
+            className="flex-1 bg-gray-100 text-gray-700 hover:bg-gray-200 border-gray-300 py-3"
           >
             Save for Later
           </Button>

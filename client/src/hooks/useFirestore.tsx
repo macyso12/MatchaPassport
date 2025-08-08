@@ -103,6 +103,12 @@ export function useSavedSpots(userId?: string) {
 
   const addSavedSpot = async (savedSpotData: InsertSavedSpot) => {
     try {
+      // Check if spot is already saved
+      const existingSpot = savedSpots.find(s => s.spotId === savedSpotData.spotId);
+      if (existingSpot) {
+        throw new Error("Spot already exists in saved list");
+      }
+
       const docRef = await addDoc(collection(db, "savedSpots"), {
         ...savedSpotData,
         createdAt: Timestamp.now(),
