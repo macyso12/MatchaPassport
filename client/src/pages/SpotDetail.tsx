@@ -9,16 +9,27 @@ import { useSavedSpots } from "@/hooks/useFirestore";
 import { useAuth } from "@/hooks/useAuth";
 import { useToastState } from "@/hooks/useToastState";
 import { formatDistanceToNow } from "date-fns";
+import { useState, useEffect } from "react";
 
 export default function SpotDetail() {
   const { id } = useParams<{ id: string }>();
   const [, setLocation] = useLocation();
   const { user } = useAuth();
   const { showToast } = useToastState();
+  const [isSaved, setIsSaved] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
   
   const spot = staticSpots.find(s => s.id === id);
   const { comments, loading: commentsLoading } = useComments(id);
-  const { addSavedSpot } = useSavedSpots(user?.id);
+  const { savedSpots, addSavedSpot } = useSavedSpots(user?.id);
+
+  // Check if this spot is already saved
+  useEffect(() => {
+    if (savedSpots && spot) {
+      const isSpotSaved = savedSpots.some(saved => saved.spotId === spot.id);
+      setIsSaved(isSpotSaved);
+    }
+  }, [savedSpots, spot]);
 
   if (!spot) {
     return <div>Spot not found</div>;
@@ -42,18 +53,28 @@ export default function SpotDetail() {
       return;
     }
 
+    if (isSaved) {
+      showToast("Spot already saved!", "error");
+      return;
+    }
+
+    setIsSaving(true);
     try {
       await addSavedSpot({
         userId: user.id,
         spotId: spot.id,
       });
-      showToast("Spot saved for later!");
+      setIsSaved(true);
+      showToast("The spot has been saved");
     } catch (error) {
       if (error.message?.includes("already exists")) {
-        showToast("Spot is already saved!", "error");
+        setIsSaved(true);
+        showToast("The spot has been saved");
       } else {
         showToast("Failed to save spot", "error");
       }
+    } finally {
+      setIsSaving(false);
     }
   };
 
@@ -135,9 +156,14 @@ export default function SpotDetail() {
           <Button 
             variant="outline"
             onClick={handleSaveForLater}
-            className="flex-1 bg-gray-100 text-gray-700 hover:bg-gray-200 border-gray-300 py-3"
+            disabled={isSaved || isSaving}
+            className={`flex-1 py-3 ${
+              isSaved 
+                ? "bg-matcha-100 text-matcha-700 border-matcha-300 cursor-not-allowed" 
+                : "bg-gray-100 text-gray-700 hover:bg-gray-200 border-gray-300"
+            }`}
           >
-            Save for Later
+            {isSaving ? "Saving..." : isSaved ? "Saved ✓" : "Save for Later"}
           </Button>
         </div>
       </div>

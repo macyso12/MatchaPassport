@@ -7,11 +7,31 @@ import { StarRating } from "@/components/StarRating";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { AuthTest } from "@/components/AuthTest";
+import { useAuth } from "@/hooks/useAuth";
+import { useSavedSpots } from "@/hooks/useFirestore";
+import { useToastState } from "@/hooks/useToastState";
 
 export default function MapView() {
   const [, setLocation] = useLocation();
   const [selectedSpot, setSelectedSpot] = useState<Spot | null>(null);
   const mapRef = useRef<HTMLDivElement>(null);
+  const [savedStates, setSavedStates] = useState<Record<string, boolean>>({});
+  const [savingStates, setSavingStates] = useState<Record<string, boolean>>({});
+  
+  const { user } = useAuth();
+  const { savedSpots, addSavedSpot } = useSavedSpots(user?.id);
+  const { showToast } = useToastState();
+
+  // Update saved states when savedSpots changes
+  useEffect(() => {
+    if (savedSpots) {
+      const newSavedStates: Record<string, boolean> = {};
+      savedSpots.forEach(saved => {
+        newSavedStates[saved.spotId] = true;
+      });
+      setSavedStates(newSavedStates);
+    }
+  }, [savedSpots]);
 
   // Mock time for status bar
   const currentTime = new Date().toLocaleTimeString("en-US", {
@@ -27,6 +47,37 @@ export default function MapView() {
   const viewSpotDetails = () => {
     if (selectedSpot) {
       setLocation(`/spot/${selectedSpot.id}`);
+    }
+  };
+
+  const handleSaveForLater = async (spot: Spot) => {
+    if (!user) {
+      showToast("Please sign in to save spots", "error");
+      return;
+    }
+
+    if (savedStates[spot.id]) {
+      showToast("Spot already saved!", "error");
+      return;
+    }
+
+    setSavingStates(prev => ({ ...prev, [spot.id]: true }));
+    try {
+      await addSavedSpot({
+        userId: user.id,
+        spotId: spot.id,
+      });
+      setSavedStates(prev => ({ ...prev, [spot.id]: true }));
+      showToast("The spot has been saved");
+    } catch (error) {
+      if (error instanceof Error && error.message?.includes("already exists")) {
+        setSavedStates(prev => ({ ...prev, [spot.id]: true }));
+        showToast("The spot has been saved");
+      } else {
+        showToast("Failed to save spot", "error");
+      }
+    } finally {
+      setSavingStates(prev => ({ ...prev, [spot.id]: false }));
     }
   };
 
@@ -130,12 +181,26 @@ export default function MapView() {
               </div>
             </div>
             <p className="text-sm text-gray-600 mb-3">{selectedSpot.address}</p>
-            <Button 
-              onClick={viewSpotDetails}
-              className="w-full bg-matcha-500 text-white hover:bg-matcha-600"
-            >
-              View Details
-            </Button>
+            <div className="flex space-x-2">
+              <Button 
+                onClick={viewSpotDetails}
+                className="flex-1 bg-matcha-500 text-white hover:bg-matcha-600"
+              >
+                View Details
+              </Button>
+              <Button 
+                variant="outline"
+                onClick={() => handleSaveForLater(selectedSpot)}
+                disabled={savedStates[selectedSpot.id] || savingStates[selectedSpot.id]}
+                className={`flex-1 ${
+                  savedStates[selectedSpot.id] 
+                    ? "bg-matcha-100 text-matcha-700 border-matcha-300 cursor-not-allowed" 
+                    : "bg-gray-100 text-gray-700 hover:bg-gray-200 border-gray-300"
+                }`}
+              >
+                {savingStates[selectedSpot.id] ? "Saving..." : savedStates[selectedSpot.id] ? "Saved ✓" : "Save"}
+              </Button>
+            </div>
           </CardContent>
         </Card>
       )}
