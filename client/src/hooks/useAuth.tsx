@@ -1,6 +1,6 @@
 import { createContext, useContext, useEffect, useState, ReactNode } from "react";
 import { User as FirebaseUser, onAuthStateChanged } from "firebase/auth";
-import { auth, handleAuthRedirect, signInWithGoogle, signOutUser } from "@/lib/firebase";
+import { auth, signInWithGoogle, signOutUser } from "@/lib/firebase";
 import { User } from "@shared/schema";
 
 interface AuthContextType {
@@ -17,9 +17,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Handle redirect result on page load
-    handleAuthRedirect().catch(console.error);
-
     const unsubscribe = onAuthStateChanged(auth, (firebaseUser: FirebaseUser | null) => {
       if (firebaseUser) {
         const userData: User = {
