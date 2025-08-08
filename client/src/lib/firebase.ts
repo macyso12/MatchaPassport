@@ -18,8 +18,20 @@ export const db = getFirestore(app);
 
 const googleProvider = new GoogleAuthProvider();
 
-export const signInWithGoogle = () => {
-  return signInWithPopup(auth, googleProvider);
+export const signInWithGoogle = async () => {
+  try {
+    // Add additional settings to help with domain issues
+    googleProvider.setCustomParameters({
+      prompt: 'select_account'
+    });
+    
+    const result = await signInWithPopup(auth, googleProvider);
+    console.log('Sign in successful:', result.user.email);
+    return result;
+  } catch (error) {
+    console.error('Detailed sign in error:', error);
+    throw error;
+  }
 };
 
 export const signOutUser = () => {

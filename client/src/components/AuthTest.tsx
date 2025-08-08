@@ -15,9 +15,20 @@ export function AuthTest() {
       setStatus('✗ Firebase not configured properly');
     }
     
-    // Check current domain
+    // Check current domain and URL details
     const currentDomain = window.location.hostname;
-    setStatus(prev => prev + `\n✓ Current domain: ${currentDomain}`);
+    const currentOrigin = window.location.origin;
+    const currentHref = window.location.href;
+    
+    setStatus(prev => prev + 
+      `\n✓ Current domain: ${currentDomain}` +
+      `\n✓ Current origin: ${currentOrigin}` +
+      `\n✓ Full URL: ${currentHref}` +
+      `\n\nAdd to Firebase authorized domains:` +
+      `\n1. ${currentDomain}` +
+      `\n2. *.replit.app` +
+      `\n3. localhost`
+    );
   };
 
   return (
