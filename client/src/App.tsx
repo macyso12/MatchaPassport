@@ -4,8 +4,6 @@ import { queryClient } from "./lib/queryClient";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { AuthProvider } from "@/hooks/useAuth";
-import { useToastState } from "@/hooks/useToastState";
-import { Toast } from "@/components/Toast";
 import { BottomNavigation } from "@/components/BottomNavigation";
 import MapView from "@/pages/MapView";
 import SpotDetail from "@/pages/SpotDetail";
@@ -13,26 +11,6 @@ import CheckIn from "@/pages/CheckIn";
 import Passport from "@/pages/Passport";
 import Saved from "@/pages/Saved";
 import NotFound from "@/pages/not-found";
-
-function ToastProvider({ children }: { children: React.ReactNode }) {
-  const { toasts, removeToast } = useToastState();
-
-  return (
-    <>
-      {children}
-      <div className="fixed top-4 left-4 right-4 z-50 max-w-md mx-auto">
-        {toasts.map((toast) => (
-          <Toast
-            key={toast.id}
-            message={toast.message}
-            type={toast.type}
-            onClose={() => removeToast(toast.id)}
-          />
-        ))}
-      </div>
-    </>
-  );
-}
 
 function Router() {
   return (
@@ -55,10 +33,8 @@ function App() {
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
         <TooltipProvider>
-          <ToastProvider>
-            <Toaster />
-            <Router />
-          </ToastProvider>
+          <Toaster />
+          <Router />
         </TooltipProvider>
       </AuthProvider>
     </QueryClientProvider>

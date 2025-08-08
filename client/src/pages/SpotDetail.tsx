@@ -7,7 +7,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { useComments } from "@/hooks/useFirestore";
 import { useSavedSpots } from "@/hooks/useFirestore";
 import { useAuth } from "@/hooks/useAuth";
-import { useToastState } from "@/hooks/useToastState";
+import { useToast } from "@/hooks/use-toast";
 import { formatDistanceToNow } from "date-fns";
 import { useState, useEffect } from "react";
 
@@ -15,7 +15,7 @@ export default function SpotDetail() {
   const { id } = useParams<{ id: string }>();
   const [, setLocation] = useLocation();
   const { user } = useAuth();
-  const { showToast } = useToastState();
+  const { toast } = useToast();
   const [isSaved, setIsSaved] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   
@@ -41,7 +41,11 @@ export default function SpotDetail() {
 
   const handleCheckIn = () => {
     if (!user) {
-      showToast("Please sign in to check in", "error");
+      toast({
+        title: "Sign in required",
+        description: "Please sign in to check in",
+        variant: "destructive",
+      });
       return;
     }
     setLocation(`/check-in/${spot.id}`);
@@ -49,12 +53,20 @@ export default function SpotDetail() {
 
   const handleSaveForLater = async () => {
     if (!user) {
-      showToast("Please sign in to save spots", "error");
+      toast({
+        title: "Sign in required", 
+        description: "Please sign in to save spots",
+        variant: "destructive",
+      });
       return;
     }
 
     if (isSaved) {
-      showToast("Spot already saved!", "error");
+      toast({
+        title: "Already saved",
+        description: "Spot already saved!",
+        variant: "destructive",
+      });
       return;
     }
 
@@ -65,13 +77,23 @@ export default function SpotDetail() {
         spotId: spot.id,
       });
       setIsSaved(true);
-      showToast("The spot has been saved");
+      toast({
+        title: "Saved!",
+        description: "The spot has been saved",
+      });
     } catch (error) {
-      if (error.message?.includes("already exists")) {
+      if (error instanceof Error && error.message?.includes("already exists")) {
         setIsSaved(true);
-        showToast("The spot has been saved");
+        toast({
+          title: "Saved!",
+          description: "The spot has been saved",
+        });
       } else {
-        showToast("Failed to save spot", "error");
+        toast({
+          title: "Error",
+          description: "Failed to save spot",
+          variant: "destructive",
+        });
       }
     } finally {
       setIsSaving(false);

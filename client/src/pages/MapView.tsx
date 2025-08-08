@@ -9,7 +9,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { AuthTest } from "@/components/AuthTest";
 import { useAuth } from "@/hooks/useAuth";
 import { useSavedSpots } from "@/hooks/useFirestore";
-import { useToastState } from "@/hooks/useToastState";
+import { useToast } from "@/hooks/use-toast";
 
 export default function MapView() {
   const [, setLocation] = useLocation();
@@ -20,7 +20,7 @@ export default function MapView() {
   
   const { user } = useAuth();
   const { savedSpots, addSavedSpot } = useSavedSpots(user?.id);
-  const { showToast } = useToastState();
+  const { toast } = useToast();
 
   // Update saved states when savedSpots changes
   useEffect(() => {
@@ -52,12 +52,20 @@ export default function MapView() {
 
   const handleSaveForLater = async (spot: Spot) => {
     if (!user) {
-      showToast("Please sign in to save spots", "error");
+      toast({
+        title: "Sign in required",
+        description: "Please sign in to save spots",
+        variant: "destructive",
+      });
       return;
     }
 
     if (savedStates[spot.id]) {
-      showToast("Spot already saved!", "error");
+      toast({
+        title: "Already saved",
+        description: "Spot already saved!",
+        variant: "destructive",
+      });
       return;
     }
 
@@ -68,13 +76,23 @@ export default function MapView() {
         spotId: spot.id,
       });
       setSavedStates(prev => ({ ...prev, [spot.id]: true }));
-      showToast("The spot has been saved");
+      toast({
+        title: "Saved!",
+        description: "The spot has been saved",
+      });
     } catch (error) {
       if (error instanceof Error && error.message?.includes("already exists")) {
         setSavedStates(prev => ({ ...prev, [spot.id]: true }));
-        showToast("The spot has been saved");
+        toast({
+          title: "Saved!",
+          description: "The spot has been saved",
+        });
       } else {
-        showToast("Failed to save spot", "error");
+        toast({
+          title: "Error",
+          description: "Failed to save spot",
+          variant: "destructive",
+        });
       }
     } finally {
       setSavingStates(prev => ({ ...prev, [spot.id]: false }));
