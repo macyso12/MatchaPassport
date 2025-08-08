@@ -5,6 +5,7 @@ Matcha Passport is a mobile-first web application that allows users to discover,
 # User Preferences
 
 Preferred communication style: Simple, everyday language.
+Map focus: New York City matcha shops only (updated from generic locations to real NYC cafes).
 
 # System Architecture
 

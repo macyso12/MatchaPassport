@@ -47,7 +47,7 @@ export default function MapView() {
       <div className="absolute top-8 left-0 right-0 z-40 bg-white/90 backdrop-blur-sm border-b border-gray-200">
         <div className="flex items-center px-4 py-3">
           <MapPin className="w-5 h-5 text-matcha-500 mr-3" />
-          <h1 className="text-lg font-semibold text-gray-900">MatchaMap</h1>
+          <h1 className="text-lg font-semibold text-gray-900">NYC Matcha Map</h1>
         </div>
       </div>
 
@@ -82,12 +82,15 @@ export default function MapView() {
 
         {/* Map Pins */}
         {staticSpots.map((spot, index) => {
+          // NYC map positions for matcha cafes
           const positions = [
-            { top: "32%", left: "16%" },
-            { top: "48%", left: "32%" },
-            { top: "64%", left: "48%" },
-            { top: "80%", left: "24%" },
-            { top: "96%", left: "40%" },
+            { top: "45%", left: "65%" }, // East Village - Cha-An Teahouse
+            { top: "75%", left: "48%" }, // Chinatown - Matcha Box
+            { top: "25%", left: "52%" }, // Midtown - Bibble & Sip
+            { top: "44%", left: "68%" }, // East Village - Kiki's Tea
+            { top: "72%", left: "50%" }, // Lower East Side - Tea Drunk
+            { top: "60%", left: "58%" }, // Lower East Side - Nana's Green Tea
+            { top: "15%", left: "78%" }, // Upper East Side - Matcha Cafe Maiko
           ];
           
           const position = positions[index] || positions[0];
