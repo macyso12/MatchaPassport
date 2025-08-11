@@ -24,3 +24,8 @@ By focusing on matcha-specific criteria and creating a dedicated community, Matc
 * Go beyond generic star ratings with categories tailored for matcha lovers — taste, matcha quality & origin, presentation, aesthetic/vibes, seating & workspace comfort, and service. This helps users compare spots based on what truly matters to them.
 * Interactive Matcha Map
 * A visually rich, location-based map that lets users discover nearby or trending matcha spots. Filters allow searching by vibe (cozy, minimal, Instagrammable), matcha style (ceremonial, latte, iced), or amenities (outlets, Wi-Fi, outdoor seating).
+
+## Demo
+https://github.com/user-attachments/assets/0c174994-a9c1-4929-9505-0cb7ec2b617e
+
+
